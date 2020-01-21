@@ -11,6 +11,8 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag argocd-grafana-annotator:$GITHUB_SHA
+      run: docker build -t docker.pkg.github.com/andrew-waters/argocd-grafana-annotator:$GITHUB_SHA --file Dockerfile
+    - name: Login
+      run: docker login docker.pkg.github.com -u andrew-waters -p ${{ secrets.GITHUB_TOKEN }}
     - name: Push the image
-      run: docker push docker.pkg.github.com/andrew-waters/argocd-grafana-annotator/argocd-grafana-annotator:$GITHUB_SHA
+      run: docker push docker.pkg.github.com/andrew-waters/argocd-grafana-annotator:$GITHUB_SHA
