@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Docker Build and Push
 
 on: [push]
 
@@ -12,3 +12,5 @@ jobs:
     - uses: actions/checkout@v1
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag argocd-grafana-annotator:$GITHUB_SHA
+    - name: Push the image
+      run: docker push andrew-waters/argocd-grafana-annotator:$GITHUB_SHA
