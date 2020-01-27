@@ -3,16 +3,14 @@ name: Docker Build and Push
 on: [push]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v1
-    - name: Build the Docker image
-      run: docker build . -t docker.pkg.github.com/andrew-waters/argocd-grafana-annotator/notifier:$GITHUB_SHA --file Dockerfile
-    - name: Login
-      run: docker login docker.pkg.github.com -u andrew-waters -p ${{ secrets.GITHUB_TOKEN }}
-    - name: Push the image
-      run: docker push docker.pkg.github.com/andrew-waters/argocd-grafana-annotator/notifier:$GITHUB_SHA
+      - uses: actions/checkout@v1
+      - name: Build the Docker image
+        run: docker build . -t docker.pkg.github.com/andrew-waters/argo-events-grafana-annotator/notifier:$GITHUB_SHA --file Dockerfile
+      - name: Login
+        run: docker login docker.pkg.github.com -u andrew-waters -p ${{ secrets.GITHUB_TOKEN }}
+      - name: Push the image
+        run: docker push docker.pkg.github.com/andrew-waters/argo-events-grafana-annotator/notifier:$GITHUB_SHA
