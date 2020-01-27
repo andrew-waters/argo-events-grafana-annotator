@@ -1,0 +1,18 @@
+version: "2"
+
+expansions: 3
+
+tasks:
+  run:
+    desc: Run a dev instance of the container
+    silent: true
+    cmds:
+      - docker build . -t andondev/argo-events-grafana-annotator:dev
+      - docker run --env-file .env andondev/argo-events-grafana-annotator:dev
+
+  publish:
+    desc: Publish the container to Docker Hub
+    silent: true
+    cmds:
+      - docker build . -t andondev/argo-events-grafana-annotator:latest
+      - docker push andondev/argo-events-grafana-annotator:latest
