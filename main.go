@@ -18,11 +18,28 @@ type config struct {
 	Password string `required:"true" envconfig:"MYSQL_PASSWORD"`
 	Database string `required:"true" envconfig:"MYSQL_DATABASE"`
 	Table    string `required:"true" envconfig:"MYSQL_TABLE"`
+	Text     string `required:"true" envconfig:"TEXT"`
+	Tags     string `required:"true" envconfig:"TAGS"`
+	Start    string `required:"false" envconfig:"START"`
+	End      string `required:"false" envconfig:"END"`
 }
 
-func timestamp() string {
-	t := time.Now()
-	return t.Format("2006-01-02 15:04:05.999999")
+func timestamps(c config) (string, string) {
+	format := "2006-01-02 15:04:05.999999"
+	now := time.Now()
+
+	// try to parse the env values
+	start, err := time.Parse(format, c.Start)
+	if err != nil {
+		start = now
+	}
+	end, err := time.Parse(format, c.End)
+	if err != nil {
+		// we haven't specified an end time so this isn't a range - use the start time to end with
+		end = start
+	}
+
+	return start.Format(format), end.Format(format)
 }
 
 func main() {
@@ -39,14 +56,12 @@ func main() {
 	checkErr("SQL Open", err)
 	defer db.Close()
 
-	t := timestamp()
-	text := "Deployment happened"
-	tags := "deployment"
+	start, end := timestamps(c)
 
-	stmt, err := db.Prepare("INSERT annotations SET start=?, text=?, tags=?")
+	stmt, err := db.Prepare("INSERT annotations SET start=?, end=?, text=?, tags=?")
 	checkErr("Prepare Statement", err)
 
-	res, err := stmt.Exec(t, text, tags)
+	res, err := stmt.Exec(start, end, c.Text, c.Tags)
 	checkErr("Exec Statement", err)
 
 	id, err := res.LastInsertId()
